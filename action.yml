@@ -1,0 +1,76 @@
+---
+name: "Build Gluon"
+description: "Build Gluon images using the build-gluon docker container"
+inputs:
+  container-version:
+    description: 'Container version to use'
+    default: 'master'
+  gluon-path:
+    description: 'Path to Gluon repository'
+    required: true
+  site-path:
+    description: 'Path to Gluon site-directory'
+    default: ''
+  autoremove:
+    description: 'Remove build-directories after build (Default: 1)'
+    default: 1
+  autoupdater-enabled:
+    description: 'Autoupdater should be enabled by default (Default: 0)'
+    default: 0
+  autoupdater-branch:
+    description: 'Default branch for the Autoupdater'
+  broken:
+    description: 'Determines if BROKEN devices should be built (Default: 0)'
+    default: 0
+  deprecated:
+    description: 'Determines if deprecated devices should be built (Default: 0)'
+    default: 0
+  hardware-target:
+    description: 'Target to build'
+  make-target:
+    description: 'Make target to use'
+    default: ''
+  priority:
+    description: Priority indicator for the autoupdater
+  release:
+    description: 'Version string for the release to use'
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        docker build \
+          --build-arg CONTAINER \
+          --build-arg VERSION \
+          -t sdk \
+          $GITHUB_ACTION_PATH
+      env:
+        VERSION: ${{ inputs.container-version }}
+      shell: bash
+    - run: |
+        docker run --rm \
+          --user "$(id -u):$(id -g)" \
+          --env ACTION_MAKE_TARGET \
+          --env ACTION_GLUON_AUTOREMOVE \
+          --env ACTION_GLUON_AUTOUPDATER_ENABLED \
+          --env ACTION_GLUON_AUTOUPDATER_BRANCH \
+          --env ACTION_GLUON_BROKEN \
+          --env ACTION_GLUON_DEPRECATED \
+          --env ACTION_GLUON_PRIORITY \
+          --env ACTION_GLUON_RELEASE \
+          --env ACTION_GLUON_TARGET \
+          --volume "$GITHUB_WORKSPACE/$ACTION_SITE_PATH:/gluon/site-repo" \
+          --volume "$GITHUB_WORKSPACE/$ACTION_GLUON_PATH:/gluon/gluon-repo" \
+          sdk
+      env:
+        ACTION_GLUON_AUTOREMOVE: ${{ inputs.autoremove }}
+        ACTION_GLUON_AUTOUPDATER_ENABLED: ${{ inputs.autoupdater-enabled }}
+        ACTION_GLUON_AUTOUPDATER_BRANCH: ${{ inputs.autoupdater-branch }}
+        ACTION_GLUON_BROKEN: ${{ inputs.broken }}
+        ACTION_GLUON_DEPRECATED: ${{ inputs.deprecated }}
+        ACTION_GLUON_PRIORITY: ${{ inputs.priority }}
+        ACTION_GLUON_RELEASE: ${{ inputs.release }}
+        ACTION_GLUON_TARGET: ${{ inputs.hardware-target }}
+        ACTION_MAKE_TARGET: ${{ inputs.make-target }}
+        ACTION_GLUON_PATH: ${{ inputs.gluon-path }}
+        ACTION_SITE_PATH: ${{ inputs.site-path }}
+      shell: bash
