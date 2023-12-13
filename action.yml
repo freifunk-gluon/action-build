@@ -34,6 +34,8 @@ inputs:
     description: Priority indicator for the autoupdater
   release:
     description: 'Version string for the release to use'
+  site-version:
+    description: 'Version string for the site to use'
 runs:
   using: 'composite'
   steps:
@@ -57,6 +59,7 @@ runs:
           --env ACTION_GLUON_DEPRECATED \
           --env ACTION_GLUON_PRIORITY \
           --env ACTION_GLUON_RELEASE \
+          --env ACTION_GLUON_SITE_VERSION \
           --env ACTION_GLUON_TARGET \
           --volume "$GITHUB_WORKSPACE/$ACTION_SITE_PATH:/gluon/site-repo" \
           --volume "$GITHUB_WORKSPACE/$ACTION_GLUON_PATH:/gluon/gluon-repo" \
@@ -69,6 +72,7 @@ runs:
         ACTION_GLUON_DEPRECATED: ${{ inputs.deprecated }}
         ACTION_GLUON_PRIORITY: ${{ inputs.priority }}
         ACTION_GLUON_RELEASE: ${{ inputs.release }}
+        ACTION_GLUON_SITE_VERSION: ${{ inputs.site-version }}
         ACTION_GLUON_TARGET: ${{ inputs.hardware-target }}
         ACTION_MAKE_TARGET: ${{ inputs.make-target }}
         ACTION_GLUON_PATH: ${{ inputs.gluon-path }}
