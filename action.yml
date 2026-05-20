@@ -48,6 +48,29 @@ runs:
       env:
         VERSION: ${{ inputs.container-version }}
       shell: bash
+
+    - run: |
+        if [[ "$ACTION_GLUON_PATH" = /* ]]; then
+          GLUON_PATH_ABS=$ACTION_GLUON_PATH
+        else
+          GLUON_PATH_ABS="$GITHUB_WORKSPACE/$ACTION_GLUON_PATH"
+        fi
+        if [[ "$ACTION_SITE_PATH" = /* ]]; then
+          SITE_PATH_ABS=$ACTION_SITE_PATH
+        else
+          SITE_PATH_ABS="$GITHUB_WORKSPACE/$ACTION_SITE_PATH"
+        fi
+
+        echo "SITE_PATH_ABS=$SITE_PATH_ABS" >> $GITHUB_ENV
+        echo "GLUON_PATH_ABS=$GLUON_PATH_ABS" >> $GITHUB_ENV
+
+        echo "Absolute path for Gluon repository: $GLUON_PATH_ABS"
+        echo "Absolute path for site repository: $SITE_PATH_ABS"
+      env:
+        ACTION_GLUON_PATH: ${{ inputs.gluon-path }}
+        ACTION_SITE_PATH: ${{ inputs.site-path }}
+      shell: bash
+
     - run: |
         docker run --rm \
           --user "$(id -u):$(id -g)" \
@@ -61,8 +84,8 @@ runs:
           --env ACTION_GLUON_RELEASE \
           --env ACTION_GLUON_SITE_VERSION \
           --env ACTION_GLUON_TARGET \
-          --volume "$GITHUB_WORKSPACE/$ACTION_SITE_PATH:/gluon/site-repo" \
-          --volume "$GITHUB_WORKSPACE/$ACTION_GLUON_PATH:/gluon/gluon-repo" \
+          --volume "$SITE_PATH_ABS:/gluon/site-repo" \
+          --volume "$GLUON_PATH_ABS:/gluon/gluon-repo" \
           sdk
       env:
         ACTION_GLUON_AUTOREMOVE: ${{ inputs.autoremove }}
