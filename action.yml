@@ -61,8 +61,8 @@ runs:
           SITE_PATH_ABS="$GITHUB_WORKSPACE/$ACTION_SITE_PATH"
         fi
 
-        echo "SITE_PATH_ABS=$SITE_PATH_ABS" >> $GITHUB_ENV
-        echo "GLUON_PATH_ABS=$GLUON_PATH_ABS" >> $GITHUB_ENV
+        echo "ACTION_SITE_PATH_ABS=$SITE_PATH_ABS" >> $GITHUB_ENV
+        echo "ACTION_GLUON_PATH_ABS=$GLUON_PATH_ABS" >> $GITHUB_ENV
 
         echo "Absolute path for Gluon repository: $GLUON_PATH_ABS"
         echo "Absolute path for site repository: $SITE_PATH_ABS"
@@ -84,8 +84,8 @@ runs:
           --env ACTION_GLUON_RELEASE \
           --env ACTION_GLUON_SITE_VERSION \
           --env ACTION_GLUON_TARGET \
-          --volume "$SITE_PATH_ABS:/gluon/site-repo" \
-          --volume "$GLUON_PATH_ABS:/gluon/gluon-repo" \
+          --volume "$ACTION_SITE_PATH_ABS:/gluon-site-repo" \
+          --volume "$ACTION_GLUON_PATH_ABS:/gluon-repo" \
           sdk
       env:
         ACTION_GLUON_AUTOREMOVE: ${{ inputs.autoremove }}
@@ -98,6 +98,4 @@ runs:
         ACTION_GLUON_SITE_VERSION: ${{ inputs.site-version }}
         ACTION_GLUON_TARGET: ${{ inputs.hardware-target }}
         ACTION_MAKE_TARGET: ${{ inputs.make-target }}
-        ACTION_GLUON_PATH: ${{ inputs.gluon-path }}
-        ACTION_SITE_PATH: ${{ inputs.site-path }}
       shell: bash
