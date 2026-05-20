@@ -20,4 +20,4 @@ echo "Extra args for build: '${GLUON_MAKE_ARGS}'"
 
 # shellcheck disable=SC2086
 # Build
-make -C /gluon/gluon-repo $ACTION_MAKE_TARGET $GLUON_MAKE_ARGS GLUON_SITEDIR=/gluon/site-repo V=s "-j$BUILD_THREADS"
+make -C /gluon-repo $ACTION_MAKE_TARGET $GLUON_MAKE_ARGS GLUON_SITEDIR=/gluon-site-repo V=s "-j$BUILD_THREADS"
